@@ -3,7 +3,6 @@ from tkinter import ttk, filedialog
 import win32gui
 from pydub import AudioSegment
 from pedalboard import *
-from pedalboard.io import AudioFile
 import os
 import tkinter as tk
 import deezer
@@ -14,6 +13,7 @@ import aiohttp
 import asyncio
 import pygame.mixer
 
+import audio_convert
 import indexFIle
 from window import add_text_and_image_about_us
 
@@ -112,129 +112,19 @@ def convert_audio():
     pygame.mixer.music.stop()
     if var.get() == "sad":
         audio = AudioSegment.from_file(file_path, format="mp3")
-
-        slowed_audio = audio._spawn(audio.raw_data, overrides={
-            "frame_rate": int(audio.frame_rate * 0.8)
-        })
-
-        slowed_audio.export(output_file, format="mp3")
-
-        samplerate = 44100.0
-        with AudioFile(output_file).resampled_to(samplerate) as f:
-            audio = f.read(f.frames)
-
-        os.remove(output_file)
-
-        board = Pedalboard([
-            Reverb(0.45, 0.5, 0.27, 0.35, 0.9, 0.0),
-            PitchShift(-2),
-        ])
-
-        file_index += 1
-        output_file = f"Project/project_{file_index}.mp3"
-
-        effected = board(audio, samplerate)
-
-        with AudioFile(output_file, 'w', samplerate, effected.shape[0]) as f:
-            f.write(effected)
-
-        pygame.mixer.music.load(output_file)
-        music_playing = False
+        audio_convert.sad_convert(output_file, file_index, audio)
 
     elif var.get() == "angry":
         audio = AudioSegment.from_file(file_path, format="mp3")
+        audio_convert.angry_convert(output_file, file_index, audio)
 
-        audio.export(output_file, format="mp3")
-
-        samplerate = 44100.0
-        with AudioFile(output_file).resampled_to(samplerate) as f:
-            audio = f.read(f.frames)
-
-        os.remove(output_file)
-
-        board = Pedalboard([
-            PitchShift(-8),
-            Distortion(10),
-            Delay(mix=0.2),
-            LowShelfFilter(cutoff_frequency_hz=600)
-        ])
-
-        file_index += 1
-        output_file = f"Project/project_{file_index}.mp3"
-
-        effected = board(audio, samplerate)
-
-        with AudioFile(output_file, 'w', samplerate, effected.shape[0]) as f:
-            f.write(effected)
-
-        pygame.mixer.music.load(output_file)
-        music_playing = False
-
-
-    elif (var.get() == "confused"):
+    elif var.get() == "confused":
         audio = AudioSegment.from_file(file_path, format="mp3")
+        audio_convert.confused_convert(output_file, file_index, audio)
 
-        slowed_audio = audio._spawn(audio.raw_data, overrides={
-            "frame_rate": int(audio.frame_rate * 0.7)
-        })
-
-        slowed_audio.export(output_file, format="mp3")
-
-        samplerate = 44100.0
-        with AudioFile(output_file).resampled_to(samplerate) as f:
-            audio = f.read(f.frames)
-
-        os.remove(output_file)
-
-        board = Pedalboard([
-            Reverb(0.8),
-            PitchShift(-10),
-            Phaser(mix=0.2),
-            Distortion(0.1)
-        ])
-
-        file_index += 1
-        output_file = f"Project/project_{file_index}.mp3"
-
-        effected = board(audio, samplerate)
-
-        with AudioFile(output_file, 'w', samplerate, effected.shape[0]) as f:
-            f.write(effected)
-
-        pygame.mixer.music.load(output_file)
-        music_playing = False
-
-    elif (var.get() == "happy"):
+    elif var.get() == "happy":
         audio = AudioSegment.from_file(file_path, format="mp3")
-
-        audio = audio.high_pass_filter(300)
-
-        audio = audio.speedup(1.1)
-
-        audio.export(output_file, format="mp3")
-
-        samplerate = 44100.0
-        with AudioFile(output_file).resampled_to(samplerate) as f:
-            audio = f.read(f.frames)
-
-        os.remove(output_file)
-
-        board = Pedalboard([
-            PitchShift(semitones=5),
-            Chorus(mix=0.2),
-            Phaser(mix=0.15)
-        ])
-
-        file_index += 1
-        output_file = f"Project/project_{file_index}.mp3"
-
-        effected = board(audio, samplerate)
-
-        with AudioFile(output_file, 'w', samplerate, effected.shape[0]) as f:
-            f.write(effected)
-
-        pygame.mixer.music.load(output_file)
-        music_playing = False
+        audio_convert.happy_convert(output_file, file_index, audio)
 
     play_button.config(state='enabled')
     pause_button.config(state='enabled')
