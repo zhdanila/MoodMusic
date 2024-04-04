@@ -14,23 +14,10 @@ import aiohttp
 import asyncio
 import pygame.mixer
 
+import indexFIle
+from window import add_text_and_image_about_us
 
-def load_file_index():
-    try:
-        with open('file_index.txt', 'r') as file:
-            return int(file.read())
-    except FileNotFoundError:
-        return 0
-
-
-file_index = load_file_index()
-
-
-def show_scene(scene_num):
-    for scene in scenes:
-        scene.pack_forget()
-    scenes[scene_num].pack()
-
+file_index = indexFIle.load_file_index()
 
 root = tk.Tk()
 root.title("MoodMusic")
@@ -76,29 +63,7 @@ notebook.add(about_us, text="Про нас", compound=tk.LEFT)
 style = ttk.Style()
 style.configure('Custom.TNotebook.Tab', padding=[31, 8], anchor='center', focuscolor='#5e34ab')
 
-
-
-def add_text_and_image_about_us():
-    about_us_text = """
-    MoodMusic - це програма, яка автоматично підбирає та змінює музику з урахуванням настрою користувача, 
-    надаючи можливість створювати персональні плейлисти та налаштовувати музичний супровід у реальному часі 
-    для максимальної музичної гармонії зі своїми емоціями і потребами.
-    """
-    about_us_label = tk.Label(about_us, text=about_us_text, wraplength=600, font=("Helvetica", 14))
-    about_us_label.pack()
-
-
-    image_path = r"images/mood_two.png"
-    image = tk.PhotoImage(file=image_path)
-    resized_image = image.subsample(1)
-    image_label = tk.Label(about_us, image=resized_image)
-    image_label.image = resized_image
-    image_label.pack()
-
-    return resized_image
-
-
-resized_image = add_text_and_image_about_us()
+resized_image = add_text_and_image_about_us(about_us)
 
 music_playing = False
 file_state = False
@@ -145,7 +110,7 @@ def convert_audio():
     output_file = f"Project/result_{file_index}.mp3"
 
     pygame.mixer.music.stop()
-    if (var.get() == "sad"):
+    if var.get() == "sad":
         audio = AudioSegment.from_file(file_path, format="mp3")
 
         slowed_audio = audio._spawn(audio.raw_data, overrides={
@@ -176,7 +141,7 @@ def convert_audio():
         pygame.mixer.music.load(output_file)
         music_playing = False
 
-    elif (var.get() == "angry"):
+    elif var.get() == "angry":
         audio = AudioSegment.from_file(file_path, format="mp3")
 
         audio.export(output_file, format="mp3")
