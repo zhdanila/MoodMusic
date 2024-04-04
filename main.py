@@ -1,20 +1,17 @@
 from tkinter import *
-from tkinter import ttk, filedialog
-import win32gui
+from tkinter import filedialog
 from pydub import AudioSegment
 from pedalboard import *
 import os
-import tkinter as tk
 import deezer
-import pygame
 import random
 import io
 import aiohttp
 import asyncio
 import pygame.mixer
-
 import audio_convert
 import indexFIle
+from audio_controllers import *
 from window import *
 
 file_index = indexFIle.load_file_index()
@@ -82,20 +79,6 @@ def save_file_index():
         file.write(str(file_index))
 
 
-def pause_music():
-    if pygame.mixer.music.get_busy():
-        pygame.mixer.music.pause()
-
-
-def stop_music():
-    pygame.mixer.music.stop()
-
-
-def unpause_music():
-    if not pygame.mixer.music.get_busy():
-        pygame.mixer.music.unpause()
-
-
 def enable_buttons():
     play_button.config(state='enabled')
     unpause_button.config(state='enabled')
@@ -152,9 +135,6 @@ play_button, pause_button, unpause_button, stop_button, convert_button = add_aud
                                                                                             select_file, var,
                                                                                             convert_audio, pause_music,
                                                                                             unpause_music, stop_music)
-
-
-
 
 
 def update_list():
@@ -216,27 +196,6 @@ current_tracks = []
 paused = False
 
 
-def pause_track():
-    global paused
-    pygame.mixer.music.pause()
-    paused = True
-
-
-def resume_track():
-    global paused
-    pygame.mixer.music.unpause()
-    paused = False
-
-
-def replay_track():
-    pygame.mixer.music.rewind()
-    pygame.mixer.music.play()
-
-
-def stop_track():
-    pygame.mixer.music.stop()
-
-
 async def play_random_track():
     global current_tracks, current_track_index
     track_category = category_var.get()
@@ -278,7 +237,7 @@ async def play_current_track():
                     pygame.mixer.music.play()
 
                     await asyncio.sleep(0.1)
-                    asyncio.create_task(check_music_finished())
+                    asyncio.create_task(check_music_finished())  # do not touch!!!
 
         except aiohttp.ClientError as e:
             print(f"Помилка під час завантаження аудіо: {e}")
