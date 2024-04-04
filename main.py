@@ -15,14 +15,12 @@ import pygame.mixer
 
 import audio_convert
 import indexFIle
-from window import add_text_and_image_about_us, add_audio_controls
+from window import *
 
 file_index = indexFIle.load_file_index()
 
 root = tk.Tk()
-root.title("MoodMusic")
-root.geometry("771x477")
-root.resizable(False, False)
+config_root(root)
 pygame.init()
 pygame.mixer.init()
 
@@ -80,7 +78,7 @@ def select_file():
 
 
 def save_file_index():
-    with open('file_index.txt', 'w') as file:
+    with open('cfg/file_index.txt', 'w') as file:
         file.write(str(file_index))
 
 
@@ -156,11 +154,7 @@ play_button, pause_button, unpause_button, stop_button, convert_button = add_aud
                                                                                             unpause_music, stop_music)
 
 
-def add_to_taskbar():
-    hwnd = root.winfo_id()
-    win32gui.ShowWindow(hwnd, 5)
-    win32gui.SetParent(hwnd, 0)
-    root.update_idletasks()
+
 
 
 def update_list():
@@ -212,7 +206,7 @@ unpause_button_2.pack(side=tk.LEFT, padx=5)
 stop_button_2 = ttk.Button(button_frame, text="Стоп", command=stop_music, style='Custom.TButton', state='enabled')
 stop_button_2.pack(side=tk.LEFT, padx=5)
 
-add_to_taskbar()
+add_to_taskbar(root)
 
 client = deezer.Client(app_id='656531', app_secret='be52f4ba4f5feb9b2f5740650c5b4d1b')
 

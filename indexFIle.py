@@ -1,6 +1,6 @@
 def load_file_index():
     try:
-        with open('file_index.txt', 'r') as file:
+        with open('cfg/file_index.txt', 'r') as file:
             return int(file.read())
     except FileNotFoundError:
         return 0

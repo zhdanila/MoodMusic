@@ -2,6 +2,20 @@ import tkinter as tk
 from tkinter import ttk
 
 import pygame
+import win32gui
+
+
+def config_root(root):
+    root.title("MoodMusic")
+    root.geometry("771x477")
+    root.resizable(False, False)
+
+
+def add_to_taskbar(root):
+    hwnd = root.winfo_id()
+    win32gui.ShowWindow(hwnd, 5)
+    win32gui.SetParent(hwnd, 0)
+    root.update_idletasks()
 
 
 def add_text_and_image_about_us(about_us):
